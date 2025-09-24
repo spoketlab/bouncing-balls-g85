@@ -46,21 +46,21 @@ class Model {
             else{
                 b.vy += deltaT * b.ay;
             }
-
-            // detect collision with other balls
-            for (Ball other : balls){
-                if (other != b){
-                    double distance =  sqrt(pow((b.x - other.x), 2) + pow((b.y - other.y), 2));
-                    if (distance < b.radius + other.radius){
-                        System.out.println("COLLISION!");
-                    }
-                }
-            }
             // compute new position according to the speed of the ball
             b.x += deltaT * b.vx;
             b.y += deltaT * b.vy;
-
 		}
+        //Detect ball collisions in each unique pair of balls
+        for (int i = 0; i < balls.length; i++) {
+            for (int j = i + 1; j < balls.length; j++) {
+                Ball b1 = balls[i];
+                Ball b2 = balls[j];
+                double distance = sqrt(pow((b1.x - b2.x), 2) + pow((b1.y - b2.y), 2));
+                if (distance < b1.radius + b2.radius) {
+                    System.out.println("COLLISION!");
+                }
+            }
+        }
 	}
 
 	/**
