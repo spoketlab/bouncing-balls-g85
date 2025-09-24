@@ -20,14 +20,15 @@ class Model {
 
 	Ball[] balls;
 
-	Model(double width, double height) {
+    Model(double width, double height) {
 		areaWidth = width;
 		areaHeight = height;
 
 		// Initialize the model with a few balls
-		balls = new Ball[2];
+		balls = new Ball[3];
 		balls[0] = new Ball(width / 3, height * 0.9, 1.2, 0, 0, -9.8, 0.2);
 		balls[1] = new Ball(2 * width / 3, height * 0.7, -0.6, 0, 0, -9.8, 0.3);
+        balls[2] = new Ball( width / 3, height * 0.3, 0.5, 0, 0, -9.8, 0.4);
 	}
 
 	void step(double deltaT) {
@@ -53,9 +54,34 @@ class Model {
 			for (int j = i + 1; j < balls.length; j++) {
 				Ball b1 = balls[i];
 				Ball b2 = balls[j];
-				double distance = sqrt(pow((b1.x - b2.x), 2) + pow((b1.y - b2.y), 2));
+                double dx = b2.x - b1.x;
+                double dy = b2.y - b1.y;
+                double distance = Math.sqrt(dx * dx + dy * dy);
 				if (distance < b1.radius + b2.radius) {
 					System.out.println("COLLISION!");
+                    double[] polarDistance = rectToPolar(dx, dy);
+                    double normalAngle = polarDistance[1];
+                    double tangentAngle = normalAngle + Math.PI / 2;
+
+                    double v1Normal = b1.vx * Math.cos(normalAngle) + b1.vy * Math.sin(normalAngle);
+                    double v1Tangent = b1.vx * Math.cos(tangentAngle) + b1.vy * Math.sin(tangentAngle);
+                    double v2Normal = b2.vx * Math.cos(normalAngle) + b2.vy * Math.sin(normalAngle);
+                    double v2Tangent = b2.vx * Math.cos(tangentAngle) + b2.vy * Math.sin(tangentAngle);
+
+                    double m1 = b1.mass;
+                    double m2 = b2.mass;
+                    double u1Normal = ((m1 - m2) * v1Normal + 2 * m2 * v2Normal) / (m1 + m2);
+                    double u2Normal = ((m2 - m1) * v2Normal + 2 * m1 * v1Normal) / (m1 + m2);
+
+                    double[] v1NormalRect = polarToRect(u1Normal, normalAngle);
+                    double[] v1TangentRect = polarToRect(v1Tangent, tangentAngle);
+                    double[] v2NormalRect = polarToRect(u2Normal, normalAngle);
+                    double[] v2TangentRect = polarToRect(v2Tangent, tangentAngle);
+
+                    b1.vx = v1NormalRect[0] + v1TangentRect[0];
+                    b1.vy = v1NormalRect[1] + v1TangentRect[1];
+                    b2.vx = v2NormalRect[0] + v2TangentRect[0];
+                    b2.vy = v2NormalRect[1] + v2TangentRect[1];
 				}
 			}
 		}
