@@ -1,5 +1,8 @@
 package bouncing_balls;
 
+import static java.lang.Math.pow;
+import static java.lang.Math.sqrt;
+
 /**
  * The physics model.
  * 
@@ -38,6 +41,15 @@ class Model {
 				b.vy *= -1;
 			}
 
+            // detect collision with other balls
+            for (Ball other : balls){
+                if (other != b){
+                    double distance =  sqrt(pow((b.x - other.x), 2) + pow((b.y - other.y), 2));
+                    if (distance < b.radius + other.radius){
+                        System.out.println("COLLISION!");
+                    }
+                }
+            }
 			// compute new position according to the speed of the ball
 			b.vx += deltaT * b.ax;
 			b.vy += deltaT * b.ay;
