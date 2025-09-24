@@ -33,47 +33,46 @@ class Model {
 	void step(double deltaT) {
 		// TODO this method implements one step of simulation with a step deltaT
 		for (Ball b : balls) {
-            // detect collision with the border
+			// detect collision with the border
 			if (b.x < b.radius || b.x > areaWidth - b.radius) {
 				b.vx *= -1; // change direction of ball
+			} else {
+				b.vx += deltaT * b.ax;
 			}
-            else{
-                b.vx += deltaT * b.ax;
-            }
 			if (b.y < b.radius || b.y > areaHeight - b.radius) {
 				b.vy *= -1;
+			} else {
+				b.vy += deltaT * b.ay;
 			}
-            else{
-                b.vy += deltaT * b.ay;
-            }
-            // compute new position according to the speed of the ball
-            b.x += deltaT * b.vx;
-            b.y += deltaT * b.vy;
+			// compute new position according to the speed of the ball
+			b.x += deltaT * b.vx;
+			b.y += deltaT * b.vy;
 		}
-        //Detect ball collisions in each unique pair of balls
-        for (int i = 0; i < balls.length; i++) {
-            for (int j = i + 1; j < balls.length; j++) {
-                Ball b1 = balls[i];
-                Ball b2 = balls[j];
-                double distance = sqrt(pow((b1.x - b2.x), 2) + pow((b1.y - b2.y), 2));
-                if (distance < b1.radius + b2.radius) {
-                    System.out.println("COLLISION!");
-                }
-            }
-        }
+		// Detect ball collisions in each unique pair of balls
+		for (int i = 0; i < balls.length; i++) {
+			for (int j = i + 1; j < balls.length; j++) {
+				Ball b1 = balls[i];
+				Ball b2 = balls[j];
+				double distance = sqrt(pow((b1.x - b2.x), 2) + pow((b1.y - b2.y), 2));
+				if (distance < b1.radius + b2.radius) {
+					System.out.println("COLLISION!");
+				}
+			}
+		}
 	}
-	public static double[] rectToPolar(double x, double y){
-    	double r = Math.sqrt(x * x + y * y);
+
+	public static double[] rectToPolar(double x, double y) {
+		double r = Math.sqrt(x * x + y * y);
 		double theta = Math.atan2(y, x);
 
-		return new double[]{r, theta};
+		return new double[] { r, theta };
 	}
 
-	public static double[] polarToRect(double r, double theta){
+	public static double[] polarToRect(double r, double theta) {
 		double x = r * Math.cos(theta);
 		double y = r * Math.sin(theta);
 
-		return new double[] {x, y};
+		return new double[] { x, y };
 	}
 
 	/**
@@ -89,6 +88,7 @@ class Model {
 			this.radius = r;
 			this.ax = ax;
 			this.ay = ay;
+			this.mass = r * r * 3.0; // mass proportional to area
 		}
 
 		/**
@@ -96,6 +96,6 @@ class Model {
 		 * other
 		 * attributes.
 		 */
-		double x, y, vx, vy, ax, ay, radius;
+		double x, y, vx, vy, ax, ay, radius, mass;
 	}
 }
