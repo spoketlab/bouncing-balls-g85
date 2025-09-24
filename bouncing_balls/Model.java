@@ -5,7 +5,8 @@ package bouncing_balls;
  * 
  * This class is where you should implement your bouncing balls model.
  * 
- * The code has intentionally been kept as simple as possible, but if you wish, you can improve the design.
+ * The code has intentionally been kept as simple as possible, but if you wish,
+ * you can improve the design.
  * 
  * @author Simon Robillard
  *
@@ -13,17 +14,17 @@ package bouncing_balls;
 class Model {
 
 	double areaWidth, areaHeight;
-	
-	Ball [] balls;
+
+	Ball[] balls;
 
 	Model(double width, double height) {
 		areaWidth = width;
 		areaHeight = height;
-		
+
 		// Initialize the model with a few balls
 		balls = new Ball[2];
-		balls[0] = new Ball(width / 3, height * 0.9, 1.2, 1.6, 0.2);
-		balls[1] = new Ball(2 * width / 3, height * 0.7, -0.6, 0.6, 0.3);
+		balls[0] = new Ball(width / 3, height * 0.9, 1.2, 1.6, 0.2, -9.8, 0.2);
+		balls[1] = new Ball(2 * width / 3, height * 0.7, -0.6, 0.6, 0.2, -9.8, 0.3);
 	}
 
 	void step(double deltaT) {
@@ -36,29 +37,36 @@ class Model {
 			if (b.y < b.radius || b.y > areaHeight - b.radius) {
 				b.vy *= -1;
 			}
-			
+
 			// compute new position according to the speed of the ball
+			b.vx += deltaT * b.ax;
+			b.vy += deltaT * b.ay;
 			b.x += deltaT * b.vx;
 			b.y += deltaT * b.vy;
+
 		}
 	}
-	
+
 	/**
 	 * Simple inner class describing balls.
 	 */
 	class Ball {
-		
-		Ball(double x, double y, double vx, double vy, double r) {
+
+		Ball(double x, double y, double vx, double vy, double ax, double ay, double r) {
 			this.x = x;
 			this.y = y;
 			this.vx = vx;
 			this.vy = vy;
 			this.radius = r;
+			this.ax = ax;
+			this.ay = ay;
 		}
 
 		/**
-		 * Position, speed, and radius of the ball. You may wish to add other attributes.
+		 * Position, speed, acceleration and radius of the ball. You may wish to add
+		 * other
+		 * attributes.
 		 */
-		double x, y, vx, vy, radius;
+		double x, y, vx, vy, ax, ay, radius;
 	}
 }
