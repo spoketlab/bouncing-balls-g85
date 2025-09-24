@@ -26,20 +26,26 @@ class Model {
 
 		// Initialize the model with a few balls
 		balls = new Ball[2];
-		balls[0] = new Ball(width / 3, height * 0.9, 1.2, 1.6, 0.2, -9.8, 0.2);
-		balls[1] = new Ball(2 * width / 3, height * 0.7, -0.6, 0.6, 0.2, -9.8, 0.3);
+		balls[0] = new Ball(width / 3, height * 0.9, 1.2, 0, 0, -9.8, 0.2);
+		balls[1] = new Ball(2 * width / 3, height * 0.7, -0.6, 0, 0, -9.8, 0.3);
 	}
 
 	void step(double deltaT) {
 		// TODO this method implements one step of simulation with a step deltaT
 		for (Ball b : balls) {
-			// detect collision with the border
+            // detect collision with the border
 			if (b.x < b.radius || b.x > areaWidth - b.radius) {
 				b.vx *= -1; // change direction of ball
 			}
+            else{
+                b.vx += deltaT * b.ax;
+            }
 			if (b.y < b.radius || b.y > areaHeight - b.radius) {
 				b.vy *= -1;
 			}
+            else{
+                b.vy += deltaT * b.ay;
+            }
 
             // detect collision with other balls
             for (Ball other : balls){
@@ -50,11 +56,9 @@ class Model {
                     }
                 }
             }
-			// compute new position according to the speed of the ball
-			b.vx += deltaT * b.ax;
-			b.vy += deltaT * b.ay;
-			b.x += deltaT * b.vx;
-			b.y += deltaT * b.vy;
+            // compute new position according to the speed of the ball
+            b.x += deltaT * b.vx;
+            b.y += deltaT * b.vy;
 
 		}
 	}
